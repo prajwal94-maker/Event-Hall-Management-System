@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EventHall — Admin Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="./admin.css"/>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-bg">
+    <div class="login-orb orb1"></div>
+    <div class="login-orb orb2"></div>
+    <div class="login-orb orb3"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo-mark">
+        <span class="logo-glyph">⬡</span>
+      </div>
+      <div>
+        <h1 class="login-title">EventHall</h1>
+        <p class="login-sub">Command Center</p>
+      </div>
+    </div>
+    <div id="loginError" class="login-error" style="display:none"></div>
+    <div class="field-wrap">
+      <label class="field-label">Email Address</label>
+      <input type="email" id="adminEmail" class="field-input" value="admin@eventhall.in" autocomplete="off"/>
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">Password</label>
+      <input type="password" id="adminPassword" class="field-input" placeholder="••••••••"/>
+    </div>
+    <button class="login-btn" onclick="adminLogin()">
+      <span>Sign In</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <p class="login-hint">EventHall Administration Portal · Secure Access</p>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="adminApp" class="admin-app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <span class="sidebar-glyph">⬡</span>
+        <div>
+          <div class="sidebar-title">EventHall</div>
+          <div class="sidebar-role">Admin Panel</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section-label">Main</div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-link active" data-page="dashboard" onclick="nav('dashboard',this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-link" data-page="bookings" onclick="nav('bookings',this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
+        <span>Bookings</span>
+        <span class="nav-badge" id="navBkBadge" style="display:none"></span>
+      </a>
+      <a href="#" class="nav-link" data-page="users" onclick="nav('users',this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </span>
+        <span>Users</span>
+      </a>
+      <a href="#" class="nav-link" data-page="messages" onclick="nav('messages',this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </span>
+        <span>Messages</span>
+        <span class="nav-badge" id="navMsgBadge" style="display:none"></span>
+      </a>
+      <a href="#" class="nav-link" data-page="analytics" onclick="nav('analytics',this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </span>
+        <span>Analytics</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-section-label">System</div>
+    <nav class="sidebar-nav">
+      <a href="/" target="_blank" class="nav-link">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+        <span>View Website</span>
+      </a>
+      <a href="#" class="nav-link logout-link" onclick="adminLogout()">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="server-status">
+        <span class="status-dot"></span>
+        <span class="status-text">Server Online</span>
+      </div>
+      <div class="sidebar-time" id="sidebarTime"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-breadcrumb">
+        <span class="breadcrumb-root">EventHall</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current" id="pageTitle">Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Quick search…" id="globalSearch" oninput="globalSearchFn()"/>
+        </div>
+        <div class="topbar-clock" id="topbarClock"></div>
+        <div class="admin-pill">
+          <div class="admin-avatar">A</div>
+          <div class="admin-info">
+            <div class="admin-name">Admin</div>
+            <div class="admin-role">Super Admin</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════ DASHBOARD ═══════════ -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-hero">
+        <div>
+          <h1 class="page-heading">Good <span id="timeGreeting">Morning</span>, Admin 👋</h1>
+          <p class="page-subheading">Here's what's happening at EventHall today</p>
+        </div>
+        <div class="hero-date" id="heroDate"></div>
+      </div>
+
+      <!-- KPI STRIP -->
+      <div class="kpi-strip">
+        <div class="kpi-tile kpi-accent">
+          <div class="kpi-top"><span class="kpi-label">Total Bookings</span><span class="kpi-icon-sm">📋</span></div>
+          <div class="kpi-num" id="kpiTotal">—</div>
+          <div class="kpi-sub" id="kpiTotalSub">All time</div>
+          <div class="kpi-sparkline" id="sp1"></div>
+        </div>
+        <div class="kpi-tile kpi-green">
+          <div class="kpi-top"><span class="kpi-label">Active</span><span class="kpi-icon-sm">✅</span></div>
+          <div class="kpi-num" id="kpiActive">—</div>
+          <div class="kpi-sub">Confirmed + Pending</div>
+          <div class="kpi-sparkline" id="sp2"></div>
+        </div>
+        <div class="kpi-tile kpi-gold">
+          <div class="kpi-top"><span class="kpi-label">Revenue Collected</span><span class="kpi-icon-sm">💰</span></div>
+          <div class="kpi-num" id="kpiRevenue">—</div>
+          <div class="kpi-sub" id="kpiRevSub">Total advance paid</div>
+          <div class="kpi-sparkline" id="sp3"></div>
+        </div>
+        <div class="kpi-tile kpi-blue">
+          <div class="kpi-top"><span class="kpi-label">Pending Amount</span><span class="kpi-icon-sm">⏳</span></div>
+          <div class="kpi-num" id="kpiPending">—</div>
+          <div class="kpi-sub">Balance due on event day</div>
+        </div>
+        <div class="kpi-tile kpi-purple">
+          <div class="kpi-top"><span class="kpi-label">Registered Users</span><span class="kpi-icon-sm">👥</span></div>
+          <div class="kpi-num" id="kpiUsers">—</div>
+          <div class="kpi-sub">Total customers</div>
+        </div>
+        <div class="kpi-tile kpi-red">
+          <div class="kpi-top"><span class="kpi-label">Cancelled</span><span class="kpi-icon-sm">❌</span></div>
+          <div class="kpi-num" id="kpiCancelled">—</div>
+          <div class="kpi-sub">Total cancellations</div>
+        </div>
+        <div class="kpi-tile kpi-teal">
+          <div class="kpi-top"><span class="kpi-label">Today's Bookings</span><span class="kpi-icon-sm">📅</span></div>
+          <div class="kpi-num" id="kpiToday">—</div>
+          <div class="kpi-sub">Booked today</div>
+        </div>
+        <div class="kpi-tile kpi-orange">
+          <div class="kpi-top"><span class="kpi-label">Unread Messages</span><span class="kpi-icon-sm">✉️</span></div>
+          <div class="kpi-num" id="kpiMsgs">—</div>
+          <div class="kpi-sub">From customers</div>
+        </div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="chart-grid">
+        <div class="chart-panel wide-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Hall Bookings Comparison</div>
+              <div class="panel-subtitle">Confirmed vs Completed vs Cancelled per hall</div>
+            </div>
+          </div>
+          <div class="chart-area"><canvas id="hallCompareChart"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Hall Utilization</div>
+              <div class="panel-subtitle">Bookings by venue</div>
+            </div>
+          </div>
+          <div class="chart-area donut-area"><canvas id="hallChart"></canvas></div>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+
+      <!-- SECOND ROW -->
+      <div class="info-grid">
+        <!-- Recent Bookings -->
+        <div class="info-panel large-panel">
+          <div class="panel-header">
+            <div class="panel-title">Recent Bookings</div>
+            <button class="panel-action-btn" onclick="nav('bookings', document.querySelector('[data-page=bookings]'))">View All →</button>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Booking ID</th><th>Customer</th><th>Hall</th><th>Event Date</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="recentBody"><tr><td colspan="6" class="tbl-loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+        <!-- Hall Stats -->
+        <div class="info-panel">
+          <div class="panel-header">
+            <div class="panel-title">Hall Performance</div>
+            <div class="panel-subtitle">Revenue per hall</div>
+          </div>
+          <div id="hallPerf"></div>
+        </div>
+      </div>
+
+      <!-- STATUS BREAKDOWN -->
+      <div class="status-grid">
+        <div class="status-panel" style="padding:18px 20px 20px">
+          <div class="panel-title" style="margin-bottom:12px;font-size:0.9rem">Booking Status Breakdown</div>
+          <div style="position:relative;height:200px;width:100%">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+        <div class="status-panel" style="padding:18px 20px 20px">
+          <div class="panel-title" style="margin-bottom:12px;font-size:0.9rem">Event Types Distribution</div>
+          <div style="position:relative;height:200px;width:100%">
+            <canvas id="eventTypeChart"></canvas>
+          </div>
+        </div>
+        <div class="status-panel" style="padding:18px 20px 20px">
+          <div class="panel-title" style="margin-bottom:12px;font-size:0.9rem">Time Slot Preference</div>
+          <div style="position:relative;height:200px;width:100%">
+            <canvas id="slotChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ BOOKINGS ═══════════ -->
+    <div id="page-bookings" class="page">
+      <div class="page-hero">
+        <div><h1 class="page-heading">Bookings</h1><p class="page-subheading">Manage all hall reservations</p></div>
+        <div class="summary-pills" id="bkSummaryPills"></div>
+      </div>
+      <div class="filter-deck">
+        <div class="search-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="bkSearch" placeholder="Search name, email, booking ID…" oninput="debounceBookings()"/>
+        </div>
+        <select id="bkStatus" onchange="loadBookings()">
+          <option value="">All Status</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select id="bkHall" onchange="loadBookings()">
+          <option value="">All Halls</option>
+          <option value="1">Royal Grand Hall</option>
+          <option value="2">Shanthi Mahal</option>
+          <option value="3">Pearl Banquet</option>
+          <option value="4">Emerald Convention</option>
+          <option value="5">Coconut Grove</option>
+          <option value="6">Heritage Palace</option>
+        </select>
+        <input type="date" id="bkFrom" onchange="loadBookings()" title="From date"/>
+        <input type="date" id="bkTo"   onchange="loadBookings()" title="To date"/>
+        <button class="filter-clear" onclick="clearBkFilters()">Clear</button>
+      </div>
+      <div class="table-panel">
+        <table class="data-table">
+          <thead><tr><th>Booking ID</th><th>Customer</th><th>Hall</th><th>Event Date</th><th>Slot</th><th>Guests</th><th>Total</th><th>Advance</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="bookingsBody"><tr><td colspan="10" class="tbl-loading">Loading…</td></tr></tbody>
+        </table>
+        <div class="pagination-bar" id="bkPagination"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════ USERS ═══════════ -->
+    <div id="page-users" class="page">
+      <div class="page-hero">
+        <div><h1 class="page-heading">Users</h1><p class="page-subheading">Registered customers</p></div>
+      </div>
+      <div class="filter-deck">
+        <div class="search-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="usrSearch" placeholder="Search by name or email…" oninput="debounceUsers()"/>
+        </div>
+      </div>
+      <div class="table-panel">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Bookings</th><th>Total Spent</th><th>Joined</th><th>Action</th></tr></thead>
+          <tbody id="usersBody"><tr><td colspan="8" class="tbl-loading">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════ MESSAGES ═══════════ -->
+    <div id="page-messages" class="page">
+      <div class="page-hero">
+        <div><h1 class="page-heading">Messages</h1><p class="page-subheading">Communicate with customers</p></div>
+      </div>
+      <div class="msg-layout">
+        <div class="compose-card">
+          <div class="compose-header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <span>Compose Message</span>
+          </div>
+          <div class="compose-field">
+            <label>To (Customer)</label>
+            <select id="msgUserId"><option value="">— Select Customer —</option></select>
+          </div>
+          <div class="compose-field">
+            <label>Subject</label>
+            <input type="text" id="msgSubject" placeholder="e.g. Your booking confirmation"/>
+          </div>
+          <div class="compose-field">
+            <label>Message</label>
+            <textarea id="msgBody" rows="5" placeholder="Type your message here…"></textarea>
+          </div>
+          <div class="compose-footer">
+            <button class="send-btn" onclick="sendAdminMessage()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Send Message
+            </button>
+            <span id="msgSendStatus"></span>
+          </div>
+        </div>
+        <div class="table-panel">
+          <div class="panel-header" style="padding:1.2rem 1.5rem 0">
+            <div class="panel-title">Sent Messages</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>To</th><th>Subject</th><th>Preview</th><th>Sent</th><th>Status</th></tr></thead>
+            <tbody id="messagesBody"><tr><td colspan="5" class="tbl-loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ ANALYTICS ═══════════ -->
+    <div id="page-analytics" class="page">
+      <div class="page-hero">
+        <div><h1 class="page-heading">Analytics</h1><p class="page-subheading">Deep insights into your business</p></div>
+      </div>
+      <div class="analytics-grid">
+        <div class="chart-panel full-panel">
+          <div class="panel-header">
+            <div><div class="panel-title">Annual Revenue Overview</div><div class="panel-subtitle">Monthly revenue vs target — current year</div></div>
+          </div>
+          <div class="chart-area tall-chart"><canvas id="annualChart"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <div class="panel-header"><div class="panel-title">Revenue by Hall</div></div>
+          <div class="chart-area"><canvas id="hallRevenueChart"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <div class="panel-header"><div class="panel-title">Booking Trends</div><div class="panel-subtitle">Last 30 days</div></div>
+          <div class="chart-area"><canvas id="trendChart"></canvas></div>
+        </div>
+      </div>
+      <div class="hall-stats-cards" id="hallStatCards"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BOOKING MODAL ═══ -->
+<div id="bkModal" class="modal-backdrop" style="display:none" onclick="closeBkModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-top">
+      <div>
+        <div class="modal-label">Booking Detail</div>
+        <h2 class="modal-title" id="bkModalTitle">—</h2>
+      </div>
+      <button class="modal-close-btn" onclick="document.getElementById('bkModal').style.display='none'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="bkModalBody"></div>
+    <div class="modal-actions-bar">
+      <div class="status-changer">
+        <label>Change Status</label>
+        <select id="bkModalStatus">
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <button class="action-btn primary-btn" onclick="updateBookingStatus()">Update</button>
+      </div>
+      <button class="action-btn danger-btn" onclick="deleteBooking()">🗑 Delete</button>
+    </div>
+    <div class="modal-msg-zone">
+      <div class="msg-zone-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Send Message to Customer
+      </div>
+      <input type="text" id="inlineMsgSubject" placeholder="Subject…"/>
+      <textarea id="inlineMsgBody" rows="3" placeholder="Your message…"></textarea>
+      <div style="display:flex;align-items:center;gap:1rem;margin-top:0.5rem">
+        <button class="action-btn primary-btn" onclick="sendInlineMessage()">Send</button>
+        <span id="inlineMsgStatus" style="font-size:0.85rem"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USER MESSAGE MODAL -->
+<div id="userMsgModal" class="modal-backdrop" style="display:none" onclick="closeUserMsgModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-top">
+      <div><div class="modal-label">Send Message</div><h2 class="modal-title" id="userMsgTitle">—</h2></div>
+      <button class="modal-close-btn" onclick="document.getElementById('userMsgModal').style.display='none'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:1.5rem">
+      <div class="compose-field"><label>Subject</label><input type="text" id="userMsgSubject" placeholder="Subject…"/></div>
+      <div class="compose-field"><label>Message</label><textarea id="userMsgBody" rows="4" placeholder="Your message…"></textarea></div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-top:1rem">
+        <button class="action-btn primary-btn" onclick="sendUserMessage()">Send Message</button>
+        <span id="userMsgStatus" style="font-size:0.85rem"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventHall – Premium Event Booking | Udupi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/style (1).css" />
+</head>
+<body>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ════════════════════════════════════════
+       AUTH MODAL
+  ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('authModal')">✕</button>
+      <div class="modal-tabs">
+        <button class="tab-btn active" id="loginTab"    onclick="switchTab('login')">Login</button>
+        <button class="tab-btn"        id="registerTab" onclick="switchTab('register')">Register</button>
+      </div>
+      <div id="loginForm">
+        <div class="field-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" /></div>
+        <div class="field-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" /></div>
+        <button class="btn btn-primary btn-full" onclick="doLogin()">Login</button>
+        <p style="text-align:center;margin-top:1rem;font-size:.85rem;color:var(--text2)">No account? <a href="#" onclick="switchTab('register')" style="color:var(--gold)">Register here</a></p>
+      </div>
+      <div id="registerForm" style="display:none">
+        <div class="field-group"><label>Full Name</label><input type="text" id="regName" placeholder="Your Name" /></div>
+        <div class="field-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com" /></div>
+        <div class="field-group"><label>Password</label><input type="password" id="regPassword" placeholder="Min 8 characters" /></div>
+        <div class="field-group"><label>Phone</label><input type="tel" id="regPhone" placeholder="+91 XXXXXXXXXX" /></div>
+        <button class="btn btn-primary btn-full" onclick="doRegister()">Create Account</button>
+        <p style="text-align:center;margin-top:1rem;font-size:.85rem;color:var(--text2)">Already registered? <a href="#" onclick="switchTab('login')" style="color:var(--gold)">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MY BOOKINGS MODAL
+  ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="bookingDetailsModal">
+    <div class="modal-box" style="max-width:540px">
+      <button class="modal-close" onclick="closeModal('bookingDetailsModal')">✕</button>
+      <div class="modal-heading">📋 My Bookings</div>
+      <div id="bookingDetailsList"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MESSAGES MODAL
+  ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="messagesModal">
+    <div class="modal-box" style="max-width:540px">
+      <button class="modal-close" onclick="closeModal('messagesModal')">✕</button>
+      <div class="modal-heading">📬 Messages from Hall Manager</div>
+      <div id="messagesList"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       CANCEL BOOKING MODAL
+  ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="cancelBookingModal">
+    <div class="modal-box cancel-modal-box">
+      <button class="modal-close" onclick="closeCancelModal()">✕</button>
+
+      <!-- Step 1: Reason -->
+      <div id="cancelStep1">
+        <div class="cancel-header">
+          <div class="cancel-icon-wrap danger-pulse">⚠️</div>
+          <div class="modal-heading" style="margin-bottom:.3rem">Cancel Booking</div>
+          <div class="cancel-booking-ref" id="cancelBookingRef"></div>
+        </div>
+        <div class="cancel-policy-banner">
+          <div class="cancel-policy-icon">📋</div>
+          <div class="cancel-policy-text"><strong>Cancellation Policy</strong><br/><span id="cancelPolicyText"></span></div>
+        </div>
+        <div class="cancel-reason-section">
+          <label class="cancel-label">Why are you cancelling? <span class="required-star">*</span></label>
+          <div class="cancel-reasons">
+            <label class="reason-option" onclick="selectCancelReason(this,'plans_changed')">
+              <input type="radio" name="cancelReason" /><span class="reason-icon">📅</span>
+              <div class="reason-text"><span class="reason-title">Plans Changed</span><span class="reason-sub">My schedule or plans have changed</span></div>
+              <span class="reason-check">✓</span>
+            </label>
+            <label class="reason-option" onclick="selectCancelReason(this,'better_price')">
+              <input type="radio" name="cancelReason" /><span class="reason-icon">💰</span>
+              <div class="reason-text"><span class="reason-title">Found Better Option</span><span class="reason-sub">Found a better venue or price elsewhere</span></div>
+              <span class="reason-check">✓</span>
+            </label>
+            <label class="reason-option" onclick="selectCancelReason(this,'emergency')">
+              <input type="radio" name="cancelReason" /><span class="reason-icon">🚑</span>
+              <div class="reason-text"><span class="reason-title">Emergency / Health Issue</span><span class="reason-sub">Unexpected personal or medical emergency</span></div>
+              <span class="reason-check">✓</span>
+            </label>
+            <label class="reason-option" onclick="selectCancelReason(this,'venue_issue')">
+              <input type="radio" name="cancelReason" /><span class="reason-icon">🏛️</span>
+              <div class="reason-text"><span class="reason-title">Venue Issue</span><span class="reason-sub">Problem with the venue or facilities</span></div>
+              <span class="reason-check">✓</span>
+            </label>
+            <label class="reason-option" onclick="selectCancelReason(this,'other')">
+              <input type="radio" name="cancelReason" /><span class="reason-icon">💬</span>
+              <div class="reason-text"><span class="reason-title">Other Reason</span><span class="reason-sub">Something else not listed above</span></div>
+              <span class="reason-check">✓</span>
+            </label>
+          </div>
+          <div class="cancel-notes-wrap" id="cancelNotesWrap" style="display:none">
+            <label class="cancel-label" style="margin-top:.8rem">Additional Notes</label>
+            <textarea id="cancelNotes" class="cancel-textarea" rows="3" maxlength="300" placeholder="Tell us more…"></textarea>
+            <span class="char-count" id="notesCharCount">0 / 300</span>
+          </div>
+        </div>
+        <div class="refund-preview" id="refundPreview" style="display:none">
+          <div class="refund-preview-title">💵 Estimated Refund</div>
+          <div class="refund-row"><span>Amount Paid</span><span id="refundAmountPaid">—</span></div>
+          <div class="refund-row"><span>Charge (<span id="refundDeductPct">0</span>%)</span><span id="refundDeduction" style="color:#f88">—</span></div>
+          <div class="refund-row total"><span>Refund Amount</span><span id="refundFinalAmt" style="color:var(--gold)">—</span></div>
+          <div class="refund-timeline">⏱ Refund within <strong>5–7 business days</strong></div>
+        </div>
+        <div class="cancel-modal-actions">
+          <button class="btn btn-ghost" onclick="closeCancelModal()">Keep Booking</button>
+          <button class="btn btn-danger-outline" id="cancelStep1NextBtn" disabled onclick="goToCancelStep2()">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: OTP -->
+      <div id="cancelStep2" style="display:none">
+        <div class="cancel-header">
+          <div class="cancel-icon-wrap otp-glow">🔐</div>
+          <div class="modal-heading" style="margin-bottom:.3rem">Verify to Cancel</div>
+          <p class="cancel-otp-sub">Enter the OTP shown below to confirm cancellation</p>
+        </div>
+        <div class="otp-screen-display">
+          <div class="otp-screen-label"><span class="otp-screen-dot"></span>Your verification code</div>
+          <div class="otp-screen-code" id="otpDisplayBox"></div>
+          <div class="otp-screen-note">Enter this code in the boxes below</div>
+        </div>
+        <div class="otp-entry-label">Enter the 6-digit code</div>
+        <div class="otp-input-row" id="otpInputRow">
+          <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" autocomplete="off" />
+          <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" autocomplete="off" />
+          <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" autocomplete="off" />
+          <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" autocomplete="off" />
+          <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" autocomplete="off" />
+          <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" autocomplete="off" />
+        </div>
+        <div class="otp-hint-row">
+          <span id="otpResendWrap">Code expired? <button class="otp-resend-btn" onclick="resendOtp()">Generate New OTP</button></span>
+          <span id="otpTimerWrap" style="display:none;font-size:.82rem;color:var(--text2)">Valid for <strong id="otpCountdown" style="color:var(--gold)">30</strong>s</span>
+        </div>
+        <div id="otpError" class="otp-error" style="display:none"></div>
+        <div class="cancel-modal-actions">
+          <button class="btn btn-ghost" onclick="goBackToCancelStep1()">← Back</button>
+          <button class="btn btn-danger-outline" id="cancelStep2ConfirmBtn" disabled onclick="confirmCancellation()">Confirm Cancellation</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div id="cancelStep3" style="display:none">
+        <div class="cancel-success-wrap">
+          <div class="cancel-success-icon">✓</div>
+          <h2 class="cancel-success-title">Booking Cancelled</h2>
+          <p class="cancel-success-sub">Your booking has been successfully cancelled.</p>
+          <div class="cancel-success-details" id="cancelSuccessDetails"></div>
+          <div class="refund-status-card">
+            <div class="refund-status-icon">💳</div>
+            <div>
+              <div class="refund-status-title">Refund Initiated</div>
+              <div class="refund-status-sub"><span id="finalRefundAmount" style="color:var(--gold);font-weight:700"></span> credited within 5–7 business days</div>
+            </div>
+          </div>
+          <div class="cancel-modal-actions" style="justify-content:center;margin-top:1.5rem">
+            <button class="btn btn-gold" style="border-radius:50px;padding:.7rem 2rem" onclick="closeCancelModal();openBookingDetails()">📋 View My Bookings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       ABOUT MODAL
+  ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="aboutModal">
+    <div class="modal-box" style="max-width:600px">
+      <button class="modal-close" onclick="closeModal('aboutModal')">✕</button>
+      <div class="modal-icon">🏛️</div>
+      <div class="modal-heading">About EventHall</div>
+      <p style="color:var(--text2);font-size:.95rem;line-height:1.8;margin-bottom:1.2rem">EventHall is Udupi's premier event venue management platform, offering an exquisite collection of banquet halls for every occasion — from intimate gatherings to grand celebrations.</p>
+      <div class="about-card-stack">
+        <div class="about-stat-card"><div class="about-stat-num">12+</div><div class="about-stat-lbl">Premium Halls</div></div>
+        <div class="about-stat-card"><div class="about-stat-num">5K+</div><div class="about-stat-lbl">Events Hosted</div></div>
+        <div class="about-stat-card"><div class="about-stat-num">98%</div><div class="about-stat-lbl">Happy Clients</div></div>
+        <div class="about-stat-card"><div class="about-stat-num">8yrs</div><div class="about-stat-lbl">Experience</div></div>
+      </div>
+      <div style="margin-top:1.5rem;padding:.8rem 1rem;background:rgba(201,168,76,.08);border-radius:10px;border:1px solid var(--border);font-size:.85rem;color:var(--text2)">
+        📍 MG Road, Manipal, Udupi, Karnataka — <strong style="color:var(--gold)">+91 98765 43210</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PAYMENT MODAL
+  ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-box" style="max-width:420px">
+      <button class="modal-close" onclick="closeModal('paymentModal')">✕</button>
+      <div class="modal-heading">💳 Complete Payment</div>
+      <div id="payModalAmount" style="text-align:center;margin-bottom:1.2rem;font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold)"></div>
+      <div class="pay-methods">
+        <button class="pay-method-btn" onclick="selectPayment('GPay')"><span class="pm-badge gpay">G</span> Google Pay</button>
+        <button class="pay-method-btn" onclick="selectPayment('PhonePe')"><span class="pm-badge phonepe">P</span> PhonePe</button>
+        <button class="pay-method-btn" onclick="selectPayment('Paytm')"><span class="pm-badge paytm">T</span> Paytm</button>
+        <button class="pay-method-btn" onclick="selectPayment('UPI')"><span class="pm-badge upi">U</span> UPI QR</button>
+      </div>
+      <button class="btn btn-gold btn-full" style="margin-top:.5rem" onclick="processPayment()">Pay Now</button>
+      <button class="btn btn-ghost btn-full" style="margin-top:.5rem" onclick="closeModal('paymentModal')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="#">
+        <div class="logo-icon">E</div>
+        <span class="logo-text">Event<strong>Hall</strong></span>
+      </a>
+      <nav class="nav-links">
+        <button class="btn btn-ghost" onclick="scrollToSection('aboutSection')">About Us</button>
+        <button class="btn btn-ghost" id="bookingDetailsBtn" style="display:none" onclick="openBookingDetails()">📋 My Bookings</button>
+        <button class="btn btn-ghost msg-btn" id="messagesBtn" style="display:none" onclick="openMessagesModal()">
+          📬 Messages <span class="msg-badge" id="msgBadge" style="display:none">0</span>
+        </button>
+        <span id="userName" style="display:none"></span>
+        <button id="loginBtn"  class="btn btn-gold"    onclick="openModal('authModal')">Login / Register</button>
+        <button id="logoutBtn" class="btn btn-outline" style="display:none" onclick="logout()">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════ -->
+  <section class="hero" id="heroSection">
+    <div class="hero-bg"></div>
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="hero-content">
+      <div class="hero-tag">✦ Premium Event Venues ✦</div>
+      <h1>Create Memories <span class="accent">That Last Forever</span></h1>
+      <p>Discover Udupi's finest event halls for weddings, birthdays, corporate events and more. Seamless booking, exquisite spaces.</p>
+      <div class="hero-btns">
+        <button class="btn btn-gold"  onclick="startBooking()">Book Your Event</button>
+        <button class="btn btn-ghost" onclick="openModal('aboutModal')">About Us</button>
+      </div>
+    </div>
+    <div class="scroll-hint"><div class="scroll-hint-dot"></div>Scroll</div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       ABOUT SECTION
+  ════════════════════════════════════════ -->
+  <div id="aboutSection">
+    <div class="section">
+      <div class="section-tag">✦ Who We Are</div>
+      <h2 class="section-title">Crafting Extraordinary<br/>Event Experiences</h2>
+      <p class="section-sub-text">From grand weddings to intimate gatherings, EventHall provides the perfect canvas for your most cherished moments.</p>
+      <div class="about-grid">
+        <div>
+          <div class="about-features">
+            <div class="about-feat"><div class="about-feat-icon">🏆</div><div><h4>Award-Winning Venues</h4><p>Recognised as Karnataka's best venue platform for 3 consecutive years</p></div></div>
+            <div class="about-feat"><div class="about-feat-icon">🎯</div><div><h4>End-to-End Planning</h4><p>From venue selection to decoration and catering — we handle it all</p></div></div>
+            <div class="about-feat"><div class="about-feat-icon">💎</div><div><h4>Premium Packages</h4><p>Curated food and décor packages that fit every budget and taste</p></div></div>
+            <div class="about-feat"><div class="about-feat-icon">📱</div><div><h4>Instant Booking</h4><p>Real-time availability and instant confirmation with digital receipts</p></div></div>
+          </div>
+          <button class="btn btn-gold" style="margin-top:1.5rem;border-radius:50px;padding:.7rem 2rem" onclick="startBooking()">Book Now →</button>
+        </div>
+        <div class="about-visual">
+          <div class="about-card-stack">
+            <div class="about-stat-card"><div class="about-stat-num">12+</div><div class="about-stat-lbl">Premium Halls</div></div>
+            <div class="about-stat-card"><div class="about-stat-num">5K+</div><div class="about-stat-lbl">Events Hosted</div></div>
+            <div class="about-stat-card"><div class="about-stat-num">98%</div><div class="about-stat-lbl">Happy Clients</div></div>
+            <div class="about-stat-card"><div class="about-stat-num">8yrs</div><div class="about-stat-lbl">Experience</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       BOOKING SECTION
+  ════════════════════════════════════════ -->
+  <div id="bookingSection" style="display:none">
+    <div class="booking-wrapper">
+      <nav class="stepper">
+        <div class="step active" id="s1"><div class="step-circle">1</div><span class="step-label">Event Details</span></div>
+        <div class="step-line" id="sl1"></div>
+        <div class="step" id="s2"><div class="step-circle">2</div><span class="step-label">Hall Selection</span></div>
+        <div class="step-line" id="sl2"></div>
+        <div class="step" id="s3"><div class="step-circle">3</div><span class="step-label">Add-ons</span></div>
+        <div class="step-line" id="sl3"></div>
+        <div class="step" id="s4"><div class="step-circle">4</div><span class="step-label">Payment</span></div>
+      </nav>
+
+      <!-- Step 1: Event Details -->
+      <section class="form-step active card" id="step1">
+        <h2 class="step-title">Event Details</h2>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Event Type</label>
+            <select id="eventType">
+              <option value="" disabled selected hidden>Select type…</option>
+              <option>Wedding</option><option>Birthday</option><option>Baby Shower</option>
+              <option>Corporate</option><option>Conference</option><option>Party</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Time Slot</label>
+            <select id="timeSlot">
+              <option value="" disabled selected hidden>Select slot…</option>
+              <option value="morning">Morning (8 AM – 4 PM)</option>
+              <option value="evening">Evening (5 PM – 1 AM)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Event Date <small style="color:var(--text2)">(tomorrow or later)</small></label>
+            <input type="date" id="eventDate" />
+          </div>
+          <div class="field-group">
+            <label>Number of Guests</label>
+            <input type="number" id="participants" placeholder="e.g. 200" min="10" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="checkbox-label"><input type="checkbox" id="foodRequired" /> Food catering required</label>
+        </div>
+        <div class="step-actions">
+          <button class="btn btn-primary" onclick="nextStep(1)">Next: Choose Hall →</button>
+        </div>
+      </section>
+
+      <!-- Step 2: Hall Selection -->
+      <section class="form-step card" id="step2">
+        <h2 class="step-title">Select a Hall</h2>
+        <div class="hall-filters">
+          <input type="text" id="locationSearch" placeholder="Search by name or location…" oninput="filterHalls()" />
+        </div>
+        <div id="hallsList" class="halls-grid"></div>
+        <div id="availabilityMessage" class="availability-msg"></div>
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="prevStep(2)">← Back</button>
+          <button class="btn btn-primary" id="selectHallBtn" disabled onclick="nextStep(2)">Confirm Hall →</button>
+        </div>
+      </section>
+
+      <!-- Step 3: Add-ons -->
+      <section class="form-step card" id="step3">
+        <h2 class="step-title">Add-ons &amp; Customization</h2>
+        <div id="foodSection" style="display:none"></div>
+        <h3 class="section-sub">🎭 Stage Design</h3>
+        <div class="stage-grid" id="stageGrid"></div>
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="prevStep(3)">← Back</button>
+          <button class="btn btn-primary" onclick="nextStep(3)">Review Summary →</button>
+        </div>
+      </section>
+
+      <!-- Step 4: Summary & Payment -->
+      <section class="form-step card" id="step4">
+        <h2 class="step-title">Booking Summary</h2>
+        <div class="summary-layout">
+          <div class="bill-summary" id="billSummary"></div>
+          <aside class="payment-panel">
+            <h3 class="section-sub" style="margin-top:0">Payment</h3>
+            <label class="checkbox-label advance-check"><input type="checkbox" id="advancePayment" onchange="updatePaymentDisplay()" /> Pay 25% advance only</label>
+            <div id="paymentAmount" class="advance-amount"></div>
+            <div class="pay-methods">
+              <button class="pay-method-btn" onclick="selectPayment('GPay')"><span class="pm-badge gpay">G</span> GPay</button>
+              <button class="pay-method-btn" onclick="selectPayment('PhonePe')"><span class="pm-badge phonepe">P</span> PhonePe</button>
+              <button class="pay-method-btn" onclick="selectPayment('Paytm')"><span class="pm-badge paytm">T</span> Paytm</button>
+              <button class="pay-method-btn" onclick="selectPayment('UPI')"><span class="pm-badge upi">U</span> UPI QR</button>
+            </div>
+            <button class="btn btn-gold btn-full" onclick="openPaymentModal()">Confirm &amp; Pay</button>
+          </aside>
+        </div>
+        <div class="step-actions"><button class="btn btn-outline" onclick="prevStep(4)">← Back</button></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-text">Event<strong>Hall</strong></span>
+        <p>Udupi's most trusted event venue booking platform. Creating memories since 2016.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#" onclick="scrollToSection('heroSection')">Home</a></li>
+          <li><a href="#" onclick="openModal('aboutModal')">About Us</a></li>
+          <li><a href="#" onclick="startBooking()">Book Now</a></li>
+          <li><a href="admin/index.html">Admin Panel</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">📍 MG Road, Manipal, Udupi</a></li>
+          <li><a href="#">📞 +91 98765 43210</a></li>
+          <li><a href="#">✉️ hello@eventhall.in</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2024 EventHall. All rights reserved. Crafted with ♥ in Udupi.</div>
+  </footer>
+
+  <script src="./js/booking (1).js"></script>
+  <script src="./js/cancel_booking.js"></script>
+</body>
+</html>
