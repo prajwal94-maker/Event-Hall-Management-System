@@ -218,6 +218,9 @@ async function doRegister() {
   const phone = document.getElementById("regPhone").value.trim();
   if (!name||!email||!pass||!phone) { toast("Please fill all fields","error"); return; }
   if (pass.length < 8)              { toast("Password must be at least 8 characters","error"); return; }
+  const phoneDigits = phone.replace(/\D/g, ""); // strip non-digits
+  if (phoneDigits.length !== 10) { toast("Phone number must be exactly 10 digits", "error"); return; }
+  if (!/^[6-9]/.test(phoneDigits)) { toast("Enter a valid Indian mobile number (starts with 6–9)", "error"); return; }
   try {
     await api("/register","POST",{ name, email, password:pass, phone });
     toast(`Registered! Please login, ${name} 🎉`,"success");

@@ -32,7 +32,7 @@
         <div class="field-group"><label>Full Name</label><input type="text" id="regName" placeholder="Your Name" /></div>
         <div class="field-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com" /></div>
         <div class="field-group"><label>Password</label><input type="password" id="regPassword" placeholder="Min 8 characters" /></div>
-        <div class="field-group"><label>Phone</label><input type="tel" id="regPhone" placeholder="+91 XXXXXXXXXX" /></div>
+        <div class="field-group"><label>Phone</label><input type="tel" id="regPhone" placeholder="+91 xxxxxxxxx" maxlength="10" minlength="10" pattern="[6-9][0-9]{9}" /></div>
         <button class="btn btn-primary btn-full" onclick="doRegister()">Create Account</button>
         <p style="text-align:center;margin-top:1rem;font-size:.85rem;color:var(--text2)">Already registered? <a href="#" onclick="switchTab('login')" style="color:var(--gold)">Login</a></p>
       </div>
