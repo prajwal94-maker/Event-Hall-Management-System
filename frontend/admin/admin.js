@@ -3,8 +3,8 @@
    EventHall Admin — admin.js
    ═══════════════════════════════════════════════════ */
  
-const ADMIN_EMAIL = 'admin@eventhall.in';
-const ADMIN_PASS  = 'Admin@1234';
+const ADMIN_EMAIL = "admin@example.com";
+const ADMIN_PASS  = "your_admin_password";
 const HALL_COLORS = ['#4f7fff','#2dce89','#f0b429','#f5365c','#9b59ff','#11cdef'];
 const HALL_NAMES  = { 1:'Royal Grand Hall', 2:'Shanthi Mahal', 3:'Pearl Banquet', 4:'Emerald Convention', 5:'Coconut Grove', 6:'Heritage Palace' };
  
