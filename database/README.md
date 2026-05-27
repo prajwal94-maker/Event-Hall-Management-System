@@ -78,7 +78,7 @@ DB_NAME=eventhall
 DB_PORT=3306
 
 ADMIN_EMAIL=admin@eventhall.in
-ADMIN_PASSWORD=Admin@1234
+ADMIN_PASSWORD=your_admin_password
 ```
 
 ### Step 4 — Install dependencies and run
@@ -95,8 +95,8 @@ npm start            # production
 
 - **Customer site:** http://localhost:3000
 - **Admin panel:**   http://localhost:3000/admin/
-  - Email: `admin@eventhall.in`
-  - Password: `Admin@1234`
+  - Email: `admin@example.com`
+  - Password: `your_admin_password`
 
 ---
 
@@ -282,8 +282,8 @@ Shared hosting typically does **not** support Node.js. Use a VPS or cloud platfo
 
 | Field    | Value                   |
 |----------|-------------------------|
-| Email    | `admin@eventhall.in`    |
-| Password | `Admin@1234`            |
+| Email    | `admin@example.com`    |
+| Password | `your_admin_password`            |
 
 **⚠️ Change the password before going live!** Update `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, and update the matching constants at the top of `frontend/admin/admin.js`.
 
